@@ -1,16 +1,23 @@
 const router = require('express').Router();
-const heroService = require('./services/mockHeroes');
+const mockService = require('../services/mockHeroes');
+const heroService = require('../services/fileHeroes');
 
 // get list => `${this.heroesUrl}`
 // get      => `${this.heroesUrl}/${id}`
 // update   => `${this.heroesUrl}/${id}`
 // delete   => `${this.heroesUrl}/${id}`
 // create   => `${this.heroesUrl}`
-// search   => `${this.heroesUrl}?name=${term}`
+//NO-  search   => `${this.heroesUrl}?name=${term}`
 
 router.get('/', async (req, res) => {
-  const heroes = await heroService.all();
-  res.send(heroes);
+  try {
+    const heroes = await heroService.all();
+    res.send(heroes);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).end();
+  }
 });
 
 router.post('/', async (req, res) => {
@@ -18,7 +25,9 @@ router.post('/', async (req, res) => {
     const hero = await heroService.create(req.body);
 
     return res.send(hero);
-  } catch (_) {
+  } catch (error) {
+    console.error(error);
+
     res.status(404).end();
   }
 });
